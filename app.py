@@ -243,6 +243,13 @@ uploaded_files = st.file_uploader(
  
 if uploaded_files:
     st.session_state.uploaded_files = uploaded_files
+
+     # Show only number of uploaded files
+    st.info(f"📂 {len(uploaded_files)} file(s) uploaded")
+
+    # Optional soft warning if too many
+    if len(uploaded_files) > 10:
+        st.warning("⚠️ Uploading more than 10 files may slow down processing.")
  
 # Clear all files button
 if st.session_state.uploaded_files:
