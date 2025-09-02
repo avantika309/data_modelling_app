@@ -18,7 +18,7 @@ model_id = "anthropic.claude-3-5-sonnet-20240620-v1:0"
 client = boto3.client("bedrock-runtime", region_name=region)
  
 st.set_page_config(page_title="ModelGenie", layout="wide")
-st.title("ModelGenie:(GenAI based modelling tool)")
+st.title("ModelGenie - A GenAI based modelling tool")
  
 # Sampling limits (increase if needed)
 PROFILE_SAMPLE_ROWS = 5000
