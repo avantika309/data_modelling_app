@@ -28,13 +28,32 @@ SCHEMA_SAMPLE_ROWS = 100
 # =========================
 # UTILITIES
 # =========================
+# def _read_df(file_bytes: bytes, filename: str, nrows: int | None):
+#     """Read CSV/Excel from bytes with optional row limit."""
+#     bio = io.BytesIO(file_bytes)
+#     if filename.lower().endswith(".csv"):
+#         return pd.read_csv(bio, nrows=nrows)
+#     return pd.read_excel(bio, nrows=nrows)
+
 def _read_df(file_bytes: bytes, filename: str, nrows: int | None):
     """Read CSV/Excel from bytes with optional row limit."""
     bio = io.BytesIO(file_bytes)
-    if filename.lower().endswith(".csv"):
+    fname = filename.lower()
+
+    if fname.endswith(".csv"):
         return pd.read_csv(bio, nrows=nrows)
-    return pd.read_excel(bio, nrows=nrows)
- 
+
+    elif fname.endswith(".xlsx"):
+        return pd.read_excel(bio, nrows=nrows, engine="openpyxl")
+
+    elif fname.endswith(".xls"):
+        return pd.read_excel(bio, nrows=nrows, engine="xlrd")
+
+    else:
+        raise ValueError(f"Unsupported file type: {filename}")
+
+
+
 def extract_schema(file_bytes: bytes, filename: str):
     """Extract lightweight schema (first N rows)."""
     df = _read_df(file_bytes, filename, nrows=SCHEMA_SAMPLE_ROWS)
