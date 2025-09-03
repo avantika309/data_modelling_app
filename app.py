@@ -28,29 +28,29 @@ SCHEMA_SAMPLE_ROWS = 100
 # =========================
 # UTILITIES
 # =========================
-# def _read_df(file_bytes: bytes, filename: str, nrows: int | None):
-#     """Read CSV/Excel from bytes with optional row limit."""
-#     bio = io.BytesIO(file_bytes)
-#     if filename.lower().endswith(".csv"):
-#         return pd.read_csv(bio, nrows=nrows)
-#     return pd.read_excel(bio, nrows=nrows)
-
 def _read_df(file_bytes: bytes, filename: str, nrows: int | None):
     """Read CSV/Excel from bytes with optional row limit."""
     bio = io.BytesIO(file_bytes)
-    fname = filename.lower()
-
-    if fname.endswith(".csv"):
+    if filename.lower().endswith(".csv"):
         return pd.read_csv(bio, nrows=nrows)
+    return pd.read_excel(bio, nrows=nrows)
 
-    elif fname.endswith(".xlsx"):
-        return pd.read_excel(bio, nrows=nrows, engine="openpyxl")
+# def _read_df(file_bytes: bytes, filename: str, nrows: int | None):
+#     """Read CSV/Excel from bytes with optional row limit."""
+#     bio = io.BytesIO(file_bytes)
+#     fname = filename.lower()
 
-    elif fname.endswith(".xls"):
-        return pd.read_excel(bio, nrows=nrows, engine="xlrd")
+#     if fname.endswith(".csv"):
+#         return pd.read_csv(bio, nrows=nrows)
 
-    else:
-        raise ValueError(f"Unsupported file type: {filename}")
+#     elif fname.endswith(".xlsx"):
+#         return pd.read_excel(bio, nrows=nrows, engine="openpyxl")
+
+#     elif fname.endswith(".xls"):
+#         return pd.read_excel(bio, nrows=nrows, engine="xlrd")
+
+#     else:
+#         raise ValueError(f"Unsupported file type: {filename}")
 
 
 
@@ -247,81 +247,81 @@ def save_erd_as_png(erd_code, filename="erd.png"):
 # UI FLOW (Professional, multi-file)
 # =========================
 
-# if 'uploaded_files' not in st.session_state:
-#     st.session_state.uploaded_files = []
-
-# if 'clear_files' not in st.session_state:
-#     st.session_state.clear_files = False
- 
-# uploader_key = f"file_uploader_{st.session_state.clear_files}"
-# uploaded_files = st.file_uploader(
-#     "Upload one or more CSV/Excel files",
-#     type=["csv", "xlsx"],
-#     accept_multiple_files=True,
-#     key=uploader_key
-# )
- 
-# if uploaded_files:
-#     st.session_state.uploaded_files = uploaded_files
-
-#     # Optional soft warning if too many
-#     if len(uploaded_files) > 10:
-#         st.warning("⚠️ Uploading more than 10 files may slow down processing.")
- 
-# # Clear all files button
-# if st.session_state.uploaded_files:
-#     if st.button("Clear All Files"):
-#         st.session_state.uploaded_files = []
-#         st.session_state.clear_files = not st.session_state.clear_files
-#         st.rerun()
-
 if 'uploaded_files' not in st.session_state:
     st.session_state.uploaded_files = []
 
 if 'clear_files' not in st.session_state:
     st.session_state.clear_files = False
-
+ 
 uploader_key = f"file_uploader_{st.session_state.clear_files}"
 uploaded_files = st.file_uploader(
-    "Upload one or more CSV/Excel/ZIP files",
-    type=["csv", "xlsx", "zip"],
+    "Upload one or more CSV/Excel files",
+    type=["csv", "xlsx"],
     accept_multiple_files=True,
     key=uploader_key
 )
-
-# Handle uploaded files (CSV, XLSX, or ZIP)
-processed_files = []
-
+ 
 if uploaded_files:
-    for f in uploaded_files:
-        if f.name.lower().endswith(".zip"):
-            # Extract files from ZIP
-            with zipfile.ZipFile(f, "r") as z:
-                for name in z.namelist():
-                    if name.lower().endswith((".csv", ".xlsx")):
-                        file_bytes = z.read(name)
-                        # Wrap extracted file like a Streamlit file object
-                        processed_files.append(
-                            type("InMemoryFile", (), {
-                                "name": name,
-                                "getvalue": lambda fb=file_bytes: fb
-                            })()
-                        )
-        else:
-            processed_files.append(f)
-
-    st.session_state.uploaded_files = processed_files
+    st.session_state.uploaded_files = uploaded_files
 
     # Optional soft warning if too many
-    if len(processed_files) > 10:
+    if len(uploaded_files) > 10:
         st.warning("⚠️ Uploading more than 10 files may slow down processing.")
-
+ 
 # Clear all files button
 if st.session_state.uploaded_files:
     if st.button("Clear All Files"):
         st.session_state.uploaded_files = []
         st.session_state.clear_files = not st.session_state.clear_files
         st.rerun()
+
+# if 'uploaded_files' not in st.session_state:
+#     st.session_state.uploaded_files = []
+
+# if 'clear_files' not in st.session_state:
+#     st.session_state.clear_files = False
+
+# uploader_key = f"file_uploader_{st.session_state.clear_files}"
+# uploaded_files = st.file_uploader(
+#     "Upload one or more CSV/Excel/ZIP files",
+#     type=["csv", "xlsx", "zip"],
+#     accept_multiple_files=True,
+#     key=uploader_key
+# )
+
+# # Handle uploaded files (CSV, XLSX, or ZIP)
+# processed_files = []
+
+# if uploaded_files:
+#     for f in uploaded_files:
+#         if f.name.lower().endswith(".zip"):
+#             # Extract files from ZIP
+#             with zipfile.ZipFile(f, "r") as z:
+#                 for name in z.namelist():
+#                     if name.lower().endswith((".csv", ".xlsx")):
+#                         file_bytes = z.read(name)
+#                         # Wrap extracted file like a Streamlit file object
+#                         processed_files.append(
+#                             type("InMemoryFile", (), {
+#                                 "name": name,
+#                                 "getvalue": lambda fb=file_bytes: fb
+#                             })()
+#                         )
+#         else:
+#             processed_files.append(f)
+
+#     st.session_state.uploaded_files = processed_files
+
+#     # Optional soft warning if too many
+#     if len(processed_files) > 10:
+#         st.warning("⚠️ Uploading more than 10 files may slow down processing.")
+
+# # Clear all files button
+# if st.session_state.uploaded_files:
+#     if st.button("Clear All Files"):
+#         st.session_state.uploaded_files = []
+#         st.session_state.clear_files = not st.session_state.clear_files
+#         st.rerun()
 
 
 target_db = st.selectbox("Target Database", ["Snowflake", "SQL Server", "Oracle", "Redshift", "Synapse"])
